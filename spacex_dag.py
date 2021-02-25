@@ -23,7 +23,7 @@ for rocket in rocket_list:
         t1 = BashOperator(
             task_id="get_data_" + rocket,
             #params={"rocket": rocket}
-            bash_command = "python3 /root/airflow/dags/spacex/load_launches.py -y {execution_date} -o /root/airflow/data/year={execution_date}/rocket={rocket} -r {rocket}".format(execution_date = execution_date['year'], rocket = rocket),
+            bash_command = "python3 /root/airflow/dags/spacex/load_launches.py -y {execution_date} -o /root/airflow/data -r {rocket}".format(execution_date = execution_date['year'], rocket = rocket),
             dag=dag
         )
 
