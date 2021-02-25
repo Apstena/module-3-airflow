@@ -14,9 +14,10 @@ default_args = {
 }
 
 dag = DAG("spacex", default_args=default_args, schedule_interval="0 0 1 1 *")
-execution_date = {"year": 2005}
+execution_date = {"year": 2004}
 rocket_list = ['falcon1', 'falcon9', 'falconheavy', 'all', ]
 while execution_date['year'] <= 2021:
+    execution_date['year'] += 1
     for rocket in rocket_list:
         params = {"rocket": rocket}
         t1 = BashOperator(
@@ -31,5 +32,4 @@ while execution_date['year'] <= 2021:
             dag=dag
         )
         
-        t1 >> t2
-    execution_date['year'] += 1
+        t1 >> t2  
