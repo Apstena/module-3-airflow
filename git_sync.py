@@ -23,7 +23,7 @@ dag = DAG(
     schedule_interval=timedelta(seconds=60),
 )
 
-latest_only = LatestOnlyOperator(task_id='latest_only', dag=dag)
+#latest_only = LatestOnlyOperator(task_id='latest_only', dag=dag)
 
 git_pull = BashOperator(
     task_id='git_pull',
@@ -31,4 +31,4 @@ git_pull = BashOperator(
     dag=dag,
 )
 
-latest_only >> git_pull
+#latest_only >> git_pull
