@@ -23,13 +23,13 @@ for rocket in rocket_list:
         t1 = BashOperator(
             task_id="get_data_" + rocket,
             #params={"rocket": rocket}
-            bash_command=f"python3 /root/airflow/dags/spacex/load_launches.py -y {execution_date['year']} -o /var/data/year={execution_date['year']}/rocket={rocket} -r {params['rocket']}",
+            bash_command=bash_command = "python3 /root/airflow/dags/spacex/load_launches.py -y {execution_date} -o /var/data/year={execution_date}/rocket={rocket} -r {rocket}".format(execution_date = execution_date['year'], rocket = rocket),
             dag=dag
         )
 
         t2 = BashOperator(
             task_id="print_data_" + rocket,
-            bash_command=f"cat /var/data/year={execution_date['year']}/rocket={params['rocket']}/data.csv",
+            bash_command="cat /var/data/year={execution_date}/rocket={rocket}/data.csv".format(execution_date = execution_date['year'], rocket = rocket),
             #params={"rocket": rocket},  # falcon1/falcon9/falconheavy
             dag=dag
         )
