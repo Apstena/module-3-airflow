@@ -14,22 +14,21 @@ default_args = {
 }
 
 dag = DAG("spacex", default_args=default_args, schedule_interval="0 0 1 1 *")
-execution_date = {"year": 2004}
+execution_date = {"year": 2005}
 rocket_list = ['falcon1', 'falcon9', 'falconheavy', 'all', ]
-while execution_date['year'] <= 2021:
-    execution_date['year'] += 1
+while execution_date['year'] <= 2021:    
     for rocket in rocket_list:
-        params = {"rocket": rocket}
         t1 = BashOperator(
-            task_id="get_data_" + rocket,    
-            bash_command = "python3 /root/airflow/dags/spacex/load_launches.py -y {execution_date} -o /root/airflow/data -r {rocket}".format(execution_date = execution_date['year'], rocket = rocket),
+            task_id="get_data_" + rocket + "_" + execution_date['year'],    
+            bash_command = f"python3 /root/airflow/dags/spacex/load_launches.py -y {execution_date['year']} -o /root/airflow/data -r {rocket}",
             dag=dag
         )
 
         t2 = BashOperator(
-            task_id="print_data_" + rocket,
-            bash_command = "cat /root/airflow/data/year={execution_date}/rocket={rocket}/data.csv".format(execution_date = execution_date['year'], rocket = rocket),
+            task_id="print_data_" + rocket + "_" + execution_date['year'],
+            bash_command = f"cat /root/airflow/data/year={execution_date['year']}/rocket={rocket}/data.csv",
             dag=dag
         )
         
-        t1 >> t2  
+        t1 >> t2
+    execution_date['year'] += 1
