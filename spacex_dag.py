@@ -29,5 +29,5 @@ for rocket in rocket_list:
         params={"rocket": rocket},  # falcon1/falcon9/falconheavy
         dag=dag
     )
-
-t1 >> t2
+    
+    t1 >> t2
