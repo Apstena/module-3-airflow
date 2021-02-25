@@ -19,13 +19,13 @@ rocket_list = ['falcon1', 'falcon9', 'falconheavy', 'all', ]
 while execution_date['year'] <= 2021:    
     for rocket in rocket_list:
         t1 = BashOperator(
-            task_id="get_data_" + rocket + "_" + execution_date['year'],    
+            task_id="get_data_" + rocket + "_" + str(execution_date['year']),    
             bash_command = "python3 /root/airflow/dags/spacex/load_launches.py -y {0} -o /root/airflow/data -r {1}".format(execution_date['year'], rocket),
             dag=dag
         )
 
         t2 = BashOperator(
-            task_id="print_data_" + rocket + "_" + execution_date['year'],
+            task_id="print_data_" + rocket + "_" + str(execution_date['year']),
             bash_command = "cat /root/airflow/data/year={0}/rocket={1}/data.csv".format(execution_date['year'], rocket),
             dag=dag
         )
