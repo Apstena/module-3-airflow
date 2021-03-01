@@ -19,7 +19,7 @@ rlist = ['falconheavy','falcon1','falcon9','all']
 for i in rlist:
     t1 = BashOperator(
         task_id="get_data"+i, 
-        bash_command="python3 /root/airflow/dags/spacex/load_launches.py -y {{{{ execution_date.year }}}} -o /var/data{}{}".format(" -r "+i if i !='all' else ""), 
+        bash_command="python3 /root/airflow/dags/spacex/load_launches.py -y {{{{ execution_date.year }}}} -o /var/data{}".format(" -r "+i if i !='all' else ""), 
         #gparams={"rocket": i}, # falcon1/falcon9/falconheavy
         dag=dag
     )
