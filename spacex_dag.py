@@ -20,7 +20,7 @@ while execution_date['year'] <= 2021:
     for rocket in rocket_list:
         t1 = BashOperator(
             task_id="get_data_" + rocket + "_" + str(execution_date['year']),    
-            bash_command = "python3 /root/airflow/dags/spacex/load_launches.py -y {0} -o /root/airflow/data -r {1}".format(execution_date['year'], rocket),
+            bash_command = "python3 /root/airflow/dags/spacex/load_launches.py -y {0} -o /root/airflow/data -r {1}".format(execution_date['year'], rocket if rocket !=all else ''),
             dag=dag
         )
 
