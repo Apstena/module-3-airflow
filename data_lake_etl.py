@@ -17,7 +17,7 @@ dag = DAG(
     description = 'Data Lake ETL tasks',
     schedule_interval = "0 0 1 1 *",
 )
-execution_date_year = {{ execution_date.year }}
+execution_date_year = 2012
 tables = {'ods_billing': ['user_id, billing_period, service, tariff, CAST(sum as INT), CAST(created_at as DATE)',
                           'stg_traffic', 'created_at'],
           'ods_issue': [
