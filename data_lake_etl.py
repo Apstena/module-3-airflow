@@ -18,15 +18,27 @@ dag = DAG(
     schedule_interval="0 0 1 1 *",
 )
 
-ods_billing = DataProcHiveOperator(
-    task_id='ods_billing',
-    dag=dag,
-    query="""
-        INSERT OVERWRITE TABLE alevanov.ods_billing PARTITION (year={{ execution_date.year }})
-        SELECT user_id, billing_period, service, tariff, CAST(sum as INT), CAST(created_at as DATE) FROM alevanov.stg_billing WHERE year(created_at) = {{ execution_date.year }};
-    """,
-    cluster_name='cluster-dataproc',
-    job_name=USERNAME + '_ods_billing_{{ execution_date.year }}_{{ params.job_suffix }}',
-    params={"job_suffix": randint(0, 100000)},
-    region='europe-west3',
-)
+tables = {'ods_billing': ['user_id, billing_period, service, tariff, CAST(sum as INT), CAST(created_at as DATE)',
+                          'stg_traffic', 'created_at'],
+          'ods_issue': [
+              'CAST(user_id as INT), CAST(start_time as DATE), CAST(end_time as DATE), title, description, service',
+              'stg_issue', 'start_time'],
+          'ods_payment': [
+              'user_id, pay_doc_type, CAST(pay_doc_num as INT), account, phone, billing_period, CAST(pay_date as DATE), CAST(sum as INT)',
+              'stg_payment', 'pay_date'],
+          'ods_traffic': [
+              'user_id, CAST(CAST(`timestamp` as BIGINT) as TIMESTAMP), device_id, device_ip_addr, CAST(bytes_sent as INT), CAST(bytes_received as INT)',
+              'stg_traffic', 'CAST(CAST(`timestamp` as BIGINT) as TIMESTAMP)']}
+
+for i in tables:
+    data_proc = DataProcHiveOperator(
+        task_id = i,
+        dag = dag,
+        query = """INSERT OVERWRITE TABLE alevanov.{3} PARTITION (year={{ execution_date.year }})
+        SELECT {0} FROM alevanov.{1} WHERE year({2}) = {{ execution_date.year }};""".format(tables[i][0], tables[i][1],
+                                                                                            tables[i][2], i),
+        cluster_name = 'cluster-dataproc',
+        job_name = USERNAME + '_{0}_{{ execution_date.year }}_{{ params.job_suffix }}'.format(i),
+        params = {"job_suffix": randint(0, 100000)},
+        region = 'europe-west3',
+    )
