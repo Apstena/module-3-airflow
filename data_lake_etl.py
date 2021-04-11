@@ -29,7 +29,7 @@ tables = {'ods_billing': ['user_id, billing_period, service, tariff, CAST(sum as
           'ods_traffic': [
               'user_id, CAST(CAST(`timestamp` as BIGINT) as TIMESTAMP), device_id, device_ip_addr, CAST(bytes_sent as INT), CAST(bytes_received as INT)',
               'stg_traffic', 'CAST(CAST(`timestamp` as BIGINT) as TIMESTAMP)']}
-params = {'current_year' : execution_date.year, 'job_suffix': randint(0, 100000)}
+params = {'current_year' : {{ execution_date.year }}, 'job_suffix': randint(0, 100000)}
 
 for i in tables:
     data_proc = DataProcHiveOperator(
