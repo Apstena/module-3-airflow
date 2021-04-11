@@ -12,12 +12,12 @@ default_args = {
 }
 
 dag = DAG(
-    USERNAME + '_data_lake_etl2',
+    USERNAME + '_data_lake_etl_2',
     default_args = default_args,
     description = 'Data Lake ETL tasks',
     schedule_interval = "0 0 1 1 *",
 )
-
+execution_date_year = {{ execution_date.year }}
 tables = {'ods_billing': ['user_id, billing_period, service, tariff, CAST(sum as INT), CAST(created_at as DATE)',
                           'stg_traffic', 'created_at'],
           'ods_issue': [
@@ -29,7 +29,7 @@ tables = {'ods_billing': ['user_id, billing_period, service, tariff, CAST(sum as
           'ods_traffic': [
               'user_id, CAST(CAST(`timestamp` as BIGINT) as TIMESTAMP), device_id, device_ip_addr, CAST(bytes_sent as INT), CAST(bytes_received as INT)',
               'stg_traffic', 'CAST(CAST(`timestamp` as BIGINT) as TIMESTAMP)']}
-params = {'current_year' : {{ execution_date.year }}, 'job_suffix': randint(0, 100000)}
+params = {'current_year' : execution_date_year, 'job_suffix': randint(0, 100000)}
 
 for i in tables:
     data_proc = DataProcHiveOperator(
