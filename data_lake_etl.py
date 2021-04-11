@@ -13,9 +13,9 @@ default_args = {
 
 dag = DAG(
     USERNAME + '_data_lake_etl',
-    default_args=default_args,
-    description='Data Lake ETL tasks',
-    schedule_interval="0 0 1 1 *",
+    default_args = default_args,
+    description = 'Data Lake ETL tasks',
+    schedule_interval = "0 0 1 1 *",
 )
 
 tables = {'ods_billing': ['user_id, billing_period, service, tariff, CAST(sum as INT), CAST(created_at as DATE)',
@@ -29,16 +29,16 @@ tables = {'ods_billing': ['user_id, billing_period, service, tariff, CAST(sum as
           'ods_traffic': [
               'user_id, CAST(CAST(`timestamp` as BIGINT) as TIMESTAMP), device_id, device_ip_addr, CAST(bytes_sent as INT), CAST(bytes_received as INT)',
               'stg_traffic', 'CAST(CAST(`timestamp` as BIGINT) as TIMESTAMP)']}
+params = {'current_year' : execution_date.year, 'job_suffix': randint(0, 100000)}
 
 for i in tables:
     data_proc = DataProcHiveOperator(
         task_id = i,
         dag = dag,
-        query = """INSERT OVERWRITE TABLE alevanov.{3} PARTITION (year={{ execution_date.year }})
-        SELECT {0} FROM alevanov.{1} WHERE year({2}) = {{ execution_date.year }};""".format(tables[i][0], tables[i][1],
-                                                                                            tables[i][2], i),
+        query = """INSERT OVERWRITE TABLE alevanov.{3} PARTITION (year={4})
+        SELECT {0} FROM alevanov.{1} WHERE year({2}) = {4};""".format(tables[i][0], tables[i][1],
+                                                                                            tables[i][2], i, params['current_year']),
         cluster_name = 'cluster-dataproc',
-        job_name = USERNAME + '_{0}_{{ execution_date.year }}_{{ params.job_suffix }}'.format(i),
-        params = {"job_suffix": randint(0, 100000)},
-        region = 'europe-west3',
+        job_name = USERNAME + '_{0}_{1}_{2}'.format(i, params['current_year'], params['job_suffix']),
+        region = 'europe-west3'
     )
