@@ -19,7 +19,7 @@ dag = DAG(
 )
 
 tables = {'ods_billing': ['user_id, billing_period, service, tariff, CAST(sum as INT), CAST(created_at as DATE)',
-                          'stg_traffic', 'created_at'],
+                          'stg_billing', 'created_at'],
           'ods_issue': [
               'CAST(user_id as INT), CAST(start_time as DATE), CAST(end_time as DATE), title, description, service',
               'stg_issue', 'start_time'],
