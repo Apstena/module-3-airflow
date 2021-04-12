@@ -32,7 +32,9 @@ tables = {'ods_billing': ['user_id, billing_period, service, tariff, CAST(sum as
           'dm_traffic' : ['user_id, MAX(bytes_received), MIN(bytes_received), AVG(bytes_received)', 'ods_traffic', 'year']}
 params = {'current_year' : 2012, 'job_suffix': randint(0, 100000)}
 
-while params['current_year'] <= 2021:
+dt = datetime.today()
+
+while params['current_year'] <= dt.year:
     for i in tables:
         if i != 'dm_traffic':
             data_proc = DataProcHiveOperator(
